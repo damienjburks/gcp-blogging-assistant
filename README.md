@@ -1,2 +1,2 @@
-# terraform-starter
+# gcp-dsb-blogging-assistant
 
