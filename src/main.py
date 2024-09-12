@@ -5,7 +5,7 @@ from flask import jsonify, request
 logging.basicConfig(level=logging.INFO)
 
 @functions_framework.http
-def cloud_function(request):
+def main(request):
     logging.info("Function triggered with method: %s", request.path)
     
     if request.path == '/getVideoId':
