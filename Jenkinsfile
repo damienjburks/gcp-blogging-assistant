@@ -60,7 +60,7 @@ pipeline {
                     steps{
                         sh '''
                         . .env/bin/activate
-                        snyk test --file=src/requirements.txt --org=${SNYK_ORG_NAME}
+                        snyk test --file=src/requirements.txt --org=${SNYK_ORG_NAME} --report
                         snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report
                         '''
                     }

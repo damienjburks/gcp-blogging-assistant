@@ -101,7 +101,7 @@ resource "google_project_iam_binding" "workflow_sa_iam" {
   ]
 }
 
-resource "google_storage_bucket" "malicious_storage_bucket" {
+resource "google_storage_bucket" "default" {
   name          = "dsb-blogging-assistant-storage"
   location      = var.region
   force_destroy = true
@@ -122,12 +122,12 @@ data "archive_file" "my_function_src" {
 
 resource "google_storage_bucket_object" "src" {
   name   = "${data.archive_file.my_function_src.output_md5}.zip"
-  bucket = google_storage_bucket.malicious_storage_bucket.name
+  bucket = google_storage_bucket.default.name
   source = data.archive_file.my_function_src.output_path
 }
 
 resource "google_cloudfunctions_function" "processing_function" {
-  name                  = "dsb-blogging-assistant-processing-function"
+  name                  = "dsb-ba-processor"
   runtime               = "python312"
   entry_point           = "main"
   source_archive_bucket = google_storage_bucket_object.src.bucket
@@ -135,7 +135,7 @@ resource "google_cloudfunctions_function" "processing_function" {
 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.malicious_storage_bucket.name
+    resource   = google_storage_bucket.default.name
   }
 
   https_trigger_security_level = "SECURE_ALWAYS"
