@@ -18,7 +18,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Gitea PAT', url: 'http://10.0.0.22/damien/terraform-starter.git']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Gitea PAT', url: 'http://10.0.0.22/damien/gcp-dsb-blogging-assistant.git']])
             }
         }
         stage('Synk Scan'){
