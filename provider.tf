@@ -3,11 +3,7 @@ terraform {
     organization = "DSB"
 
     workspaces {
-      name = "terraform-starter"
+      name = "gcp-dsb-blogging-assistant"
     }
   }
-}
-
-provider "aws" {
-  region = "us-east-1"
 }
