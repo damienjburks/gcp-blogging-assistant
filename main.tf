@@ -1,8 +1,8 @@
-resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
-  name            = "dsb-blogging-assistant-workflow"
-  region          = "us-central1"
-  service_account = google_service_account.dsb_blog_assistant_sa.email # Optional, replace with the actual service account if needed
+data "google_project" "default" {}
 
+resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
+  name        = "dsb-blogging-assistant-workflow"
+  region      = "us-central1"
   description = "Workflow for automating blog creation from YouTube videos."
 
   source_contents = <<-EOT
@@ -14,27 +14,16 @@ resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
         args:
           url: "${google_cloudfunctions_function.processing_function.https_trigger_url}/getVideoId"
           body:
-            videoName: $${videoName}
-            videoUrl: $${videoUrl}
+            videoName: $${input.videoName}
+            videoUrl: $${input.videoUrl}
+          auth:
+            type: OIDC
+        result: getVideoInformation
     - returnOutput:
-        return: $${getVideoInformation.json}
+        return: $${getVideoInformation.body}
   EOT
 
-  depends_on = [ google_cloudfunctions_function.processing_function ]
-}
-
-resource "google_service_account" "dsb_blog_assistant_sa" {
-  account_id   = "dsb-blogging-assistant"
-  display_name = "DSB Blogging Assistant Service Account"
-}
-
-resource "google_project_iam_binding" "workflow_sa_iam" {
-  project = var.project_id
-  role    = "roles/workflows.invoker"
-
-  members = [
-    "serviceAccount:${google_service_account.dsb_blog_assistant_sa.email}"
-  ]
+  depends_on = [google_cloudfunctions_function.processing_function]
 }
 
 resource "google_storage_bucket" "default" {
@@ -63,11 +52,23 @@ resource "google_storage_bucket_object" "src" {
 }
 
 resource "google_cloudfunctions_function" "processing_function" {
-  name                  = "dsb-ba-processor"
-  runtime               = "python310"
-  entry_point           = "main"
-  source_archive_bucket = google_storage_bucket_object.src.bucket
-  source_archive_object = google_storage_bucket_object.src.name
+  name                         = "dsb-ba-processor"
+  runtime                      = "python310"
+  entry_point                  = "main"
+  source_archive_bucket        = google_storage_bucket_object.src.bucket
+  source_archive_object        = google_storage_bucket_object.src.name
   https_trigger_security_level = "SECURE_ALWAYS"
-  trigger_http = true
+  ingress_settings             = "ALLOW_INTERNAL_ONLY"
+  trigger_http                 = true
+}
+
+resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
+  project        = google_cloudfunctions_function.processing_function.project
+  region         = google_cloudfunctions_function.processing_function.region
+  cloud_function = google_cloudfunctions_function.processing_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+
+  depends_on = [google_cloudfunctions_function.processing_function]
 }
