@@ -129,7 +129,7 @@ resource "google_storage_bucket_object" "src" {
 resource "google_cloudfunctions_function" "processing_function" {
   name                  = "dsb-blogging-assistant-processing-function"
   runtime               = "python312"
-  entry_point           = "hello_world"
+  entry_point           = "main"
   source_archive_bucket = google_storage_bucket_object.src.bucket
   source_archive_object = google_storage_bucket_object.src.name
 
