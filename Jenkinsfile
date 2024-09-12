@@ -61,7 +61,7 @@ pipeline {
                 }
                 stage('Synk Scan'){
                     steps{
-                        sh 'snyk test src/ --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
+                        sh 'snyk test --all-projects --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
                         sh 'snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
                     }
                 }
