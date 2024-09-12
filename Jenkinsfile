@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    
-    triggers {
-        cron('H 9 * * *') // This schedules the job to run once a day at 9AM
-    }
 
     options {
         disableConcurrentBuilds()
@@ -61,7 +57,7 @@ pipeline {
                 }
                 stage('Synk Scan'){
                     steps{
-                        sh 'snyk test --all-projects --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
+                        sh 'snyk test --all-projects --severity-threshold=high --org=${SNYK_ORG_NAME} --report -d'
                         sh 'snyk iac test --severity-threshold=high --org=${SNYK_ORG_NAME} --report'
                     }
                 }
