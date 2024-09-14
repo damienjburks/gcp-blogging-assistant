@@ -53,13 +53,33 @@ resource "google_storage_bucket_object" "src" {
 
 resource "google_cloudfunctions_function" "processing_function" {
   name                         = "dsb-ba-processor"
-  runtime                      = "python310"
+  runtime                      = "python312"
   entry_point                  = "main"
+
+  service_account_email = google_service_account.cloud_function_sa.email
   source_archive_bucket        = google_storage_bucket_object.src.bucket
   source_archive_object        = google_storage_bucket_object.src.name
   https_trigger_security_level = "SECURE_ALWAYS"
   ingress_settings             = "ALLOW_INTERNAL_ONLY"
   trigger_http                 = true
+
+  environment_variables = {
+    "OPENAI_TOKEN_ID"      = google_secret_manager_secret.openai_authtoken.secret_id
+    "YOUTUBE_TOKEN_ID"     = google_secret_manager_secret.youtube_authtoken.secret_id
+    "GIT_USERNAME_ID"      = google_secret_manager_secret.git_username.secret_id
+    "GIT_TOKEN_ID"         = google_secret_manager_secret.git_authtoken.secret_id
+    "REPOSITORY_URL"       = "https://github.com/The-DevSec-Blueprint/dsb-digest"
+    "YOUTUBE_CHANNEL_NAME" = "Damien Burks | The DevSec Blueprint (DSB)"
+    "PROJECT_ID"           = var.project_id
+  }
+
+  depends_on = [
+    google_secret_manager_secret.git_authtoken,
+    google_secret_manager_secret.git_username,
+    google_secret_manager_secret.openai_authtoken,
+    google_secret_manager_secret.youtube_authtoken,
+    google_storage_bucket_object.src
+  ]
 }
 
 resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
@@ -71,4 +91,17 @@ resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
   member = "allUsers"
 
   depends_on = [google_cloudfunctions_function.processing_function]
+}
+
+resource "google_service_account" "cloud_function_sa" {
+  account_id   = "dsb-ba-processor-sa"
+  display_name = "Cloud Function Service Account"
+}
+
+resource "google_project_iam_member" "secretmanager_access" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"  # Role that grants access to Secret Manager
+  member  = "serviceAccount:${google_service_account.cloud_function_sa.email}"
+
+  depends_on = [ google_cloudfunctions_function.processing_function ]
 }
