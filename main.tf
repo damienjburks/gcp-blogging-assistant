@@ -59,7 +59,7 @@ resource "google_cloudfunctions_function" "processing_function" {
   source_archive_bucket        = google_storage_bucket_object.src.bucket
   source_archive_object        = google_storage_bucket_object.src.name
   https_trigger_security_level = "SECURE_ALWAYS"
-  ingress_settings             = "ALLOW_INTERNAL_ONLY"
+  ingress_settings             = "ALLOW_ALL"
   trigger_http                 = true
 
   environment_variables = {
