@@ -30,6 +30,25 @@ pipeline {
                 '''
             }
         }
+        stage('Syntax Check') {
+            parallel {
+                stage('Format Check'){
+                    steps {
+                        sh '''
+                        . .env/bin/activate
+                        black --check src/
+                        '''
+                    }
+                }
+                stage('Lint Check'){
+                    steps {
+                        sh '''
+                        echo 'WIP'
+                        '''
+                    }
+                }
+            }
+        }
         stage('Security Scan'){
             parallel {
                 stage('Sonar Scan') {

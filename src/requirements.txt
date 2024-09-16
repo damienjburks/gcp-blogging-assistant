@@ -7,3 +7,5 @@ google-api-python-client
 googleapis-common-protos
 google-cloud-secret-manager
 isodate
+pylint 
+black

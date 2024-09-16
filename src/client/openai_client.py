@@ -70,5 +70,5 @@ class OpenAIClient:  # pylint: disable=too-few-public-methods
         """
         logging.info("Creating authenticated OpenAI client")
         secret_id = os.environ.get("OPENAI_TOKEN_ID")
-        auth_token = SecretsManagerClient().get_secret()
+        auth_token = SecretsManagerClient().get_secret(secret_id)
         return OpenAI(api_key=auth_token)
