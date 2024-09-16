@@ -96,7 +96,7 @@ resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
 resource "google_project_iam_member" "secretmanager_access" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor" # Role that grants access to Secret Manager
-  member  = "serviceAccount:${data.google_project.default.number}-compute@developer.gserviceaccount.com"
+  member  = "serviceAccount:${var.project_id}@appspot.gserviceaccount.com"
 
   depends_on = [google_cloudfunctions_function.processing_function]
 }
