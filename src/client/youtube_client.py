@@ -3,14 +3,13 @@ Module for interacting with the YouTube API.
 """
 
 import os
-import textwrap
 import logging
+import yt_dlp
+import webvtt
 
 from urllib.parse import urlparse, parse_qs
 from isodate import parse_duration
 from googleapiclient.discovery import build
-from youtube_transcript_api import YouTubeTranscriptApi
-
 from client.secrets_manager_client import SecretsManagerClient
 
 logging.getLogger().setLevel(logging.INFO)
@@ -56,21 +55,34 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
             return video_id, True
         return video_id, False
 
-    def get_video_transcript(self, latest_video_id, max_line_width=80):
+    def get_video_transcript(self, url, max_line_width=80):
         """
         Get the transcript of the latest video in the channel.
         """
-        transcript = YouTubeTranscriptApi.get_transcript(
-            video_id=latest_video_id, languages=["en"]
-        )
+        ydl_opts = {
+            "writeautomaticsub": True,  # Download auto-generated subtitles
+            "subtitleslangs": ["en"],  # Download subtitles in English
+            "skip_download": True,  # Skip video download
+            "outtmpl": "/tmp/temp-sub.%(ext)s",
+        }
 
-        formatted_transcript = ""
-        wrapper = textwrap.TextWrapper(width=max_line_width)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
 
-        for entry in transcript:
-            wrapped_text = wrapper.fill(text=entry["text"])
-            formatted_transcript += wrapped_text + "\n"
-        return formatted_transcript
+        # Path to your .vtt subtitle file
+        vtt_file = "/tmp/temp-sub.en.vtt"
+
+        # List to store the extracted words
+        subtitle_text = []
+
+        # Parse the .vtt file and extract the text only
+        for caption in webvtt.read(vtt_file):
+            subtitle_text.append(caption.text)
+
+        # Join all the subtitle text into one block of text
+        cleaned_subtitles = "\n".join(subtitle_text)
+
+        return cleaned_subtitles
 
     def _create_authenticated_client(self):
         """

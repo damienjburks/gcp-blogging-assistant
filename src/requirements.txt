@@ -9,3 +9,5 @@ google-cloud-secret-manager
 isodate
 pylint 
 black
+yt_dlp
+webvtt-py

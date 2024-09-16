@@ -25,27 +25,14 @@ def main(request):
         return jsonify({"error": "Unknown endpoint"}), 404
 
 
-def action_get_video_id(request):
-    """
-    This function takes in a video name and returns the video ID and video name.
-    """
-    video_name = request.get_json()["videoName"]
-    video_url = request.get_json()["videoUrl"]
-
-    youtube_client = YouTubeClient()
-    video_id, is_short = youtube_client.get_video_id(video_url)
-    return {"videoId": video_id, "videoName": video_name, "isShort": is_short}
-
-
 def action_generate_blog_post(request):
     """
     This function takes in a video ID and returns the blog post contents.
     """
-    video_id = request.get_json()["videoId"]
+    video_url = request.get_json()["videoUrl"]
     video_name = request.get_json()["videoName"]
-    video_type = request.get_json()["videoType"]
 
-    transcript = YouTubeClient().get_video_transcript(video_id)
+    transcript = YouTubeClient().get_video_transcript(video_url)
     markdown_blog = OpenAIClient().ask(transcript, video_name, video_type)
     return {"blogPostContents": markdown_blog}
 
