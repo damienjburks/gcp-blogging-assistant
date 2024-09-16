@@ -33,26 +33,28 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
         # Parse the URL
         parsed_url = urlparse(video_url)
 
-        # Check if it's a YouTube URL
-        if "youtube.com" in parsed_url.netloc or "youtu.be" in parsed_url.netloc:
-            # Extract query parameters from the URL
+        # Check if it's a YouTube URL.
+        if "youtube.com" in parsed_url.netloc:
             video_id = parse_qs(parsed_url.query).get("v", [None])[0]
+        elif "youtu.be" in parsed_url.netloc:
+            parsed_url = urlparse(video_url)
+            path = parsed_url.path
+            video_id = path.strip("/").split("/")[0]  # Extract video ID
+        else:
+            raise Exception("Invalid YouTube URL.")
 
-            response = (
-                self.youtube_client.videos()
-                .list(part="contentDetails", id=video_id)
-                .execute()
-            )
+        response = (
+            self.youtube_client.videos()
+            .list(part="contentDetails", id=video_id)
+            .execute()
+        )
 
-            # Get the duration of the video and check if it's less than 60 seconds
-            duration = response["items"][0]["contentDetails"]["duration"]
-            duration_seconds = parse_duration(duration).total_seconds()
-            if duration_seconds < 60:
-                return video_id, True
-
-            return video_id, False
-
-        raise Exception("Invalid YouTube URL.")
+        # Get the duration of the video and check if it's less than 60 seconds
+        duration = response["items"][0]["contentDetails"]["duration"]
+        duration_seconds = parse_duration(duration).total_seconds()
+        if duration_seconds < 60:
+            return video_id, True
+        return video_id, False
 
     def get_video_transcript(self, latest_video_id, max_line_width=80):
         """

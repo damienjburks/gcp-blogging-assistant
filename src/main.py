@@ -41,9 +41,9 @@ def action_generate_blog_post(request):
     """
     This function takes in a video ID and returns the blog post contents.
     """
-    video_id = request.json()["videoId"]
-    video_name = request.json()["videoName"]
-    video_type = request.json()["videoType"]
+    video_id = request.get_json()["videoId"]
+    video_name = request.get_json()["videoName"]
+    video_type = request.get_json()["videoType"]
 
     transcript = YouTubeClient().get_video_transcript(video_id)
     markdown_blog = OpenAIClient().ask(transcript, video_name, video_type)
@@ -55,8 +55,8 @@ def action_commit_blog_to_github(request):
     This function takes in a video title and blog post contents
     and returns the commit ID and branch name.
     """
-    video_name = request.json().get("videoName")
-    blog_post_contents = request.json().get("blogPostContents")
+    video_name = request.get_json().get("videoName")
+    blog_post_contents = request.get_json().get("blogPostContents")
 
     git_client = GitClient()
 

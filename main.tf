@@ -18,9 +18,22 @@ resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
             videoUrl: $${input.videoUrl}
           auth:
             type: OIDC
-        result: getVideoInformation
+        result: getVideoInformationResult
+
+    - generateBlogPost:
+        call: http.post
+        args:
+          url: "${google_cloudfunctions_function.processing_function.https_trigger_url}/generateBlogPost"
+          body:
+            videoName: $${input.videoName}
+            videoId: $${getVideoInformationResult.body.videoId}
+            videoType: "non-technical"
+          auth:
+            type: OIDC
+        result: generateBlogPostResult
+
     - returnOutput:
-        return: $${getVideoInformation.body}
+        return: $${generateBlogPostResult.body}
   EOT
 
   depends_on = [google_cloudfunctions_function.processing_function]

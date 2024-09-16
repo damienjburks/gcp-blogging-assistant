@@ -3,8 +3,6 @@
 ![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple?logo=terraform)
 ![Python Requirements](https://img.shields.io/badge/python-3.12-blue?logo=python)
 
-<p align="center"><img src="./docs/images/logo.svg" /></p>
-
 ## Overview
 
 The DSB Blogging Assistant is a framework designed to automate the creation of blog posts based on YouTube videos, streamlining the content creation process. It integrates several tools and technologies to simplify workflow automation.
