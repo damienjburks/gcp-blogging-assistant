@@ -56,7 +56,6 @@ resource "google_cloudfunctions_function" "processing_function" {
   runtime                      = "python312"
   entry_point                  = "main"
 
-  service_account_email = google_service_account.cloud_function_sa.email
   source_archive_bucket        = google_storage_bucket_object.src.bucket
   source_archive_object        = google_storage_bucket_object.src.name
   https_trigger_security_level = "SECURE_ALWAYS"
@@ -93,15 +92,10 @@ resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
   depends_on = [google_cloudfunctions_function.processing_function]
 }
 
-resource "google_service_account" "cloud_function_sa" {
-  account_id   = "dsb-ba-processor-sa"
-  display_name = "Cloud Function Service Account"
-}
-
 resource "google_project_iam_member" "secretmanager_access" {
   project = var.project_id
   role    = "roles/secretmanager.secretAccessor"  # Role that grants access to Secret Manager
-  member  = "serviceAccount:${google_service_account.cloud_function_sa.email}"
+  member  = "serviceAccount:724455289756-compute@developer.gserviceaccount.com"
 
   depends_on = [ google_cloudfunctions_function.processing_function ]
 }
