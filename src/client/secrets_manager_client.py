@@ -9,7 +9,7 @@ from google.cloud import secretmanager
 
 logging.getLogger().setLevel(logging.INFO)
 
-PROJECT_ID = os.environ.get("PROJECT_ID")
+PROJECT_NUMBER = os.environ.get("PROJECT_NUMBER")
 
 
 class SecretsManagerClient:
@@ -34,7 +34,7 @@ class SecretsManagerClient:
             The secret payload as a string.
         """
         # Build the resource name of the secret version
-        name = f"projects/{PROJECT_ID}/secrets/{secret_id}/versions/{version_id}"
+        name = f"projects/{PROJECT_NUMBER}/secrets/{secret_id}/versions/{version_id}"
 
         # Access the secret version
         response = self.client.access_secret_version(name=name)

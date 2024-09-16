@@ -52,9 +52,9 @@ resource "google_storage_bucket_object" "src" {
 }
 
 resource "google_cloudfunctions_function" "processing_function" {
-  name                         = "dsb-ba-processor"
-  runtime                      = "python312"
-  entry_point                  = "main"
+  name        = "dsb-ba-processor"
+  runtime     = "python312"
+  entry_point = "main"
 
   source_archive_bucket        = google_storage_bucket_object.src.bucket
   source_archive_object        = google_storage_bucket_object.src.name
@@ -70,6 +70,7 @@ resource "google_cloudfunctions_function" "processing_function" {
     "REPOSITORY_URL"       = "https://github.com/The-DevSec-Blueprint/dsb-digest"
     "YOUTUBE_CHANNEL_NAME" = "Damien Burks | The DevSec Blueprint (DSB)"
     "PROJECT_ID"           = var.project_id
+    "PROJECT_NUMBER"       = data.google_project.default.number
   }
 
   depends_on = [
@@ -94,8 +95,8 @@ resource "google_cloudfunctions_function_iam_member" "workflow_invoker" {
 
 resource "google_project_iam_member" "secretmanager_access" {
   project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"  # Role that grants access to Secret Manager
-  member  = "serviceAccount:724455289756-compute@developer.gserviceaccount.com"
+  role    = "roles/secretmanager.secretAccessor" # Role that grants access to Secret Manager
+  member  = "serviceAccount:${data.google_project.default.number}-compute@developer.gserviceaccount.com"
 
-  depends_on = [ google_cloudfunctions_function.processing_function ]
+  depends_on = [google_cloudfunctions_function.processing_function]
 }
