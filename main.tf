@@ -9,13 +9,23 @@ resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
   main:
     params: [input]
     steps:
+    - getVideoInformation:
+        call: http.post
+        args:
+          url: "${google_cloudfunctions_function.processing_function.https_trigger_url}/getVideoId"
+          body:
+            videoName: $${input.videoName}
+            videoUrl: $${input.videoUrl}
+          auth:
+            type: OIDC
+        result: getVideoInformationResult
     - generateBlogPost:
         call: http.post
         args:
           url: "${google_cloudfunctions_function.processing_function.https_trigger_url}/generateBlogPost"
           body:
             videoName: $${input.videoName}
-            videoUrl: $${input.videoUrl}
+            videoId: $${getVideoInformationResult.body.videoId}
           auth:
             type: OIDC
         result: generateBlogPostResult
@@ -64,10 +74,13 @@ resource "google_cloudfunctions_function" "processing_function" {
   trigger_http                 = true
 
   environment_variables = {
-    "OPENAI_TOKEN_ID"      = google_secret_manager_secret.openai_authtoken.secret_id
-    "YOUTUBE_TOKEN_ID"     = google_secret_manager_secret.youtube_authtoken.secret_id
-    "GIT_USERNAME_ID"      = google_secret_manager_secret.git_username.secret_id
-    "GIT_TOKEN_ID"         = google_secret_manager_secret.git_authtoken.secret_id
+    "OPENAI_TOKEN_ID"  = google_secret_manager_secret.openai_authtoken.secret_id
+    "YOUTUBE_TOKEN_ID" = google_secret_manager_secret.youtube_authtoken.secret_id
+    "GIT_USERNAME_ID"  = google_secret_manager_secret.git_username.secret_id
+    "GIT_TOKEN_ID"     = google_secret_manager_secret.git_authtoken.secret_id
+    "PROXY_USERNAME"   = google_secret_manager_secret.smartproxy_username.secret_id
+    "PROXY_PASSWORD"   = google_secret_manager_secret.smartproxy_password.secret_id
+
     "REPOSITORY_URL"       = "https://github.com/The-DevSec-Blueprint/dsb-digest"
     "YOUTUBE_CHANNEL_NAME" = "Damien Burks | The DevSec Blueprint (DSB)"
     "PROJECT_ID"           = var.project_id

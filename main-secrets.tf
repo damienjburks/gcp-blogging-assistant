@@ -49,3 +49,29 @@ resource "google_secret_manager_secret_version" "youtube_authtoken_version" {
   secret      = google_secret_manager_secret.youtube_authtoken.id
   secret_data = var.YOUTUBE_AUTH_TOKEN
 }
+
+# Smart Proxy Secrets
+
+resource "google_secret_manager_secret" "smartproxy_username" {
+  secret_id = "smartproxy-username"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "smartproxy_username_version" {
+  secret      = google_secret_manager_secret.smartproxy_username.id
+  secret_data = var.PROXY_USERNAME
+}
+
+resource "google_secret_manager_secret" "smartproxy_password" {
+  secret_id = "smartproxy-password"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "smartproxy_password_version" {
+  secret      = google_secret_manager_secret.smartproxy_password.id
+  secret_data = var.PROXY_PASSWORD
+}

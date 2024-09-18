@@ -3,11 +3,8 @@ Module for interacting with the YouTube API.
 """
 
 import os
-import time
-import re
 import logging
 import textwrap
-import requests
 
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
@@ -27,6 +24,7 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
 
     def __init__(self):
         self.youtube_client = self._create_authenticated_client()
+        self.secrets_manager_client = SecretsManagerClient()
 
     def get_video_id(self, video_url):
         """
@@ -62,14 +60,18 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
         """
         Get the transcript of the latest video in the channel.
         """
-        username = "spsclngw3i"
-        password = "94xv8M9aaslEoJp~Wn"
+        username_secret_id = os.environ.get("PROXY_USERNAME")
+        username = self.secrets_manager_client.get_secret(username_secret_id)
+        password_secret_id = os.environ.get("PROXY_PASSWORD")
+        password = self.secrets_manager_client.get_secret(password_secret_id)
         proxy = f"http://{username}:{password}@gate.smartproxy.com:10001"
+
         transcript = YouTubeTranscriptApi.get_transcript(
-            video_id="6IW1HQD2R5g",
+            video_id=latest_video_id,
             languages=["en"],
             proxies={"http": proxy, "https": proxy},
         )
+
         formatted_transcript = ""
         wrapper = textwrap.TextWrapper(width=max_line_width)
 
@@ -83,5 +85,5 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
         Create an authenticated YouTube API client.
         """
         secret_id = os.environ.get("YOUTUBE_TOKEN_ID")
-        api_key = SecretsManagerClient().get_secret(secret_id)
+        api_key = self.secrets_manager_client.get_secret(secret_id)
         return build("youtube", "v3", developerKey=api_key)
