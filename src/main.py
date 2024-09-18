@@ -33,7 +33,7 @@ def action_generate_blog_post(request):
     video_name = request.get_json()["videoName"]
 
     transcript = YouTubeClient().get_video_transcript(video_url)
-    markdown_blog = OpenAIClient().ask(transcript, video_name, video_type)
+    markdown_blog = OpenAIClient().ask(transcript, video_name, "non-technical")
     return {"blogPostContents": markdown_blog}
 
 
