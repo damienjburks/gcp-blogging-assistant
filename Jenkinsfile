@@ -102,4 +102,10 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+            cleanWs()
+        }
+    }
 }
