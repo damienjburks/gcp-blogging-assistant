@@ -84,6 +84,13 @@ pipeline {
                         '''
                     }
                 }
+                stage('Trivy Scan') {
+                    steps {
+                        sh '''
+                            trivy config --exit-code 0 --severity HIGH,CRITICAL ./ > trivy-report.txt
+                        '''
+                    }
+                }
             }
         }
         stage('Terraform Apply') {
