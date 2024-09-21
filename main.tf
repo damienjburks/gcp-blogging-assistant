@@ -29,6 +29,16 @@ resource "google_workflows_workflow" "dsb_blog_assistant_workflow" {
           auth:
             type: OIDC
         result: generateBlogPostResult
+    - commitCodeToGithub:
+        call: http.post
+        args:
+          url: "${google_cloudfunctions_function.processing_function.https_trigger_url}/commitBlogToGitHub"
+          body:
+            videoName: $${input.videoName}
+            blogPostContents: $${generateBlogPostResult.body.blogPostContents}
+          auth:
+            type: OIDC
+        result: generateBlogPostResult
 
     - returnOutput:
         return: $${generateBlogPostResult.body}
