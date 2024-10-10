@@ -30,26 +30,23 @@ This framework leverages:
 #### Flow Diagram Overview
 
 1. A new video is uploaded to Damien's YouTube channel.
-2. Once published, the PubSubHubBub process sends an event to the ECS cluster's YouTube Poller service.
-3. The poller extracts key information such as video title and URL, triggering a Step Function by passing the payload.
-4. The Step Function initiates the Lambda function, executing a series of steps:
+1. Damien logs into his console, and triggers the Workflow by passing in the following parameters:
+   - videoName
+   - videoUrl
+1. The Workflow initiates the Cloud Function function, executing a series of steps:
    - **Step 1:** The video transcript is downloaded.
    - **Step 2:** The transcript is sent to ChatGPT with a request to generate a blog post in markdown format.
    - **Step 3:** The `dsb-digest` repository is cloned, and the new blog post is committed to a new branch based on a hashed value of the video title.
    - **Final Step:** The process concludes, and the final payload is sent to the SNS topic.
-5. An email is sent to Damien with details about the new blog post in the `dsb-digest` repository.
+1. An email is sent to Damien with details about the new blog post in the `dsb-digest` repository.
 
 ## Installation Instructions
-
-## Engineering Notes
-
-If you need to reconfigure your Terraform Cloud account or map it to your repository, refer to the following guide:  
-<https://developer.hashicorp.com/terraform/tutorials/automation/github-actions>
 
 ## References
 
 - YouTube Push Notifications: <https://developers.google.com/youtube/v3/guides/push_notifications>
 - Related project: <https://github.com/BryanCuneo/yt-to-discord/tree/main?tab=readme-ov-file>
+- Parent project: <https://github.com/The-DevSec-Blueprint/dsb-blogging-assistant>
 
 ## License
 
