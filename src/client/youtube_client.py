@@ -23,8 +23,10 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
     """
 
     def __init__(self):
-        self.youtube_client = self._create_authenticated_client()
         self.secrets_manager_client = SecretsManagerClient()
+        self.youtube_client = self._create_authenticated_client(
+            self.secrets_manager_client
+        )
 
     def get_video_id(self, video_url):
         """
@@ -80,10 +82,12 @@ class YouTubeClient:  # pylint: disable=no-member, broad-exception-raised
             formatted_transcript += wrapped_text + "\n"
         return formatted_transcript
 
-    def _create_authenticated_client(self):
+    def _create_authenticated_client(
+        self, secrets_manager_client: SecretsManagerClient
+    ):
         """
         Create an authenticated YouTube API client.
         """
         secret_id = os.environ.get("YOUTUBE_TOKEN_ID")
-        api_key = self.secrets_manager_client.get_secret(secret_id)
+        api_key = secrets_manager_client.get_secret(secret_id)
         return build("youtube", "v3", developerKey=api_key)
