@@ -42,6 +42,17 @@ This framework leverages:
 
 ## Installation Instructions
 
+Follow these steps to install and configure the framework:
+
+1. Initialize Terraform.
+2. Create a Python virtual environment.
+3. Install Python dependencies.
+4. Verify your GitHub Actions and API key references.
+5. Log in to Terraform Cloud using your GitHub OAuth token.
+6. Trigger the Terraform plan either through the console or CLI.
+
+Installation is complete.
+
 ## References
 
 - YouTube Push Notifications: <https://developers.google.com/youtube/v3/guides/push_notifications>
