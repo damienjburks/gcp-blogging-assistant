@@ -9,7 +9,7 @@ The DSB Blogging Assistant is a framework designed to automate the creation of b
 
 This framework leverages:
 
-- **Amazon Web Services (AWS):** Utilizing various services such as Step Functions, ECR, Lambda, etc.
+- **Google Cloud Platform (GCP):** Utilizing various services such as Workflows, Cloud Functions, etc.
 - **Docker:** Containerized applications deployed to AWS for hosting and management.
 - **Terraform Cloud:** Infrastructure as Code (IaC) for deploying resources into AWS.
 - **Python 3.12:** Custom code for the YouTube Poller and the core Lambda function that interacts with ChatGPT.
@@ -19,10 +19,9 @@ This framework leverages:
 ### Base-Level Architecture Diagram
 
 > **Note:** This diagram is outdated. The ALB has been decommissioned.  
-![Base Architecture Diagram](./docs/images/architecture.drawio.svg)
+> ![Base Architecture Diagram](./docs/images/architecture.drawio.svg)
 
 #### Explanation
-
 
 ### Use Case Architecture Flow Diagram
 
