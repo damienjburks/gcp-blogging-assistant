@@ -11,7 +11,7 @@ pipeline {
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
         SONAR_TOKEN = credentials('sonar-analysis')
         SONAR_PROJECT_KEY = 'gcp-dsb-blogging-assistant'
-        NEXUS_DOCKER_REGISTRY = '10.0.0.22:8082'
+        NEXUS_DOCKER_REGISTRY = 'nexus.dsb-hub.local'
     }
 
     stages {
@@ -21,7 +21,7 @@ pipeline {
                     branches: [[name: '*/main']], 
                     extensions: [], 
                     userRemoteConfigs: [
-                        [credentialsId: 'Gitea PAT', url: 'http://10.0.0.22/damien/gcp-dsb-blogging-assistant.git']
+                        [credentialsId: 'Gitea PAT', url: 'https://dsb-hub.local/damien/gcp-dsb-blogging-assistant.git']
                     ]
                 )
             }
@@ -46,10 +46,10 @@ pipeline {
                         '''
                     }
                 }
-                stage('Lint Check'){
+                stage('Terraform Format Check'){
                     steps {
                         sh '''
-                        echo 'WIP'
+                        terraform fmt -recursive --check
                         '''
                     }
                 }
