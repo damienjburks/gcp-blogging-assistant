@@ -21,7 +21,7 @@ pipeline {
                     branches: [[name: '*/main']], 
                     extensions: [], 
                     userRemoteConfigs: [
-                        [credentialsId: 'Gitea PAT', url: 'http://10.0.0.22/damien/gcp-dsb-blogging-assistant.git']
+                        [credentialsId: 'Gitea PAT', url: 'https://dsb-hub.local/damien/gcp-dsb-blogging-assistant.git']
                     ]
                 )
             }
