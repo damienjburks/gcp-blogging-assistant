@@ -11,7 +11,7 @@ pipeline {
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
         SONAR_TOKEN = credentials('sonar-analysis')
         SONAR_PROJECT_KEY = 'gcp-dsb-blogging-assistant'
-        NEXUS_DOCKER_REGISTRY = '10.0.0.22:8082'
+        NEXUS_DOCKER_REGISTRY = 'nexus.dsb-hub.local'
     }
 
     stages {
