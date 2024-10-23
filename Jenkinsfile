@@ -11,7 +11,7 @@ pipeline {
         SNYK_ORG_NAME = 'dsb-6YmccYk2Hr2e2suHMxA4KG'
         SONAR_TOKEN = credentials('sonar-analysis')
         SONAR_PROJECT_KEY = 'gcp-dsb-blogging-assistant'
-        NEXUS_DOCKER_REGISTRY = 'nexus.dsb-hub.local'
+        NEXUS_DOCKER_REGISTRY = 'nexus-dockerproxy.dsb-hub.local'
     }
 
     stages {
@@ -67,7 +67,7 @@ pipeline {
                                     -e SONAR_HOST_URL="${SONAR_HOST_URL}" \
                                     -e SONAR_TOKEN="${SONAR_TOKEN}" \
                                     -v "$(pwd):/usr/src" \
-                                    ${NEXUS_DOCKER_REGISTRY}/sonarsource/sonar-scanner-cli \
+                                    ${NEXUS_DOCKER_REGISTRY}/sonar-scanner-cli \
                                     -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
                                     -Dsonar.qualitygate.wait=true \
                                     -Dsonar.sources=.
