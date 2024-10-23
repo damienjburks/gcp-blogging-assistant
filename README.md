@@ -19,8 +19,7 @@ This framework leverages:
 
 ### Base-Level Architecture Diagram
 
-> **Note:** This diagram is outdated. The ALB has been decommissioned.  
-> ![Base Architecture Diagram](./docs/images/architecture.drawio.svg)
+![Base Architecture Diagram](./docs/images/architecture.drawio.svg)
 
 #### Explanation
 
