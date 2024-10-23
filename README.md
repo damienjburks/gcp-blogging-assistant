@@ -21,8 +21,6 @@ This framework leverages:
 
 ![Base Architecture Diagram](./docs/images/architecture.drawio.svg)
 
-#### Explanation
-
 ### Use Case Architecture Flow Diagram
 
 ![Flow Diagram](./docs/images/flow.drawio.svg)
