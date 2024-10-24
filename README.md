@@ -11,7 +11,6 @@ This GCP Blogging Assistant is a framework designed to automate the creation of 
 This framework leverages:
 
 - **Google Cloud Platform (GCP):** Utilizing various services such as Workflows, Cloud Functions, etc.
-- **Docker:** Containerized applications deployed to AWS for hosting and management.
 - **Terraform Cloud:** Infrastructure as Code (IaC) for deploying resources into AWS.
 - **Python 3.12:** Custom code for the YouTube Poller and the core Lambda function that interacts with ChatGPT.
 
